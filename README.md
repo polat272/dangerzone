@@ -40,4 +40,5 @@ Dangerzone can convert these types of document into safe PDFs:
 
 Dangerzone was inspired by [Qubes trusted PDF](https://blog.invisiblethings.org/2013/02/21/converting-untrusted-pdfs-into-trusted.html), but it works in non-Qubes operating systems. It uses containers as sandboxes instead of virtual machines (using Docker for macOS, Windows, and Debian/Ubuntu, and [podman](https://podman.io/) for Fedora).
 
-Set up a development environment by following [these instructions](/BUILD.md).
+Set up a development environment by following [these
+instructions](/BUILD.md)...
