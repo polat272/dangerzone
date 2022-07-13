@@ -6,12 +6,21 @@ aliases:
     command: |
       export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
       apt-get update
-      apt-get install -y git ssh podman python-all dh-python python3 python3-stdeb python3-pyside2.qtcore python3-pyside2.qtgui python3-pyside2.qtwidgets python3-appdirs python3-click python3-xdg python3-requests python3-colorama
+      apt-get install -y git ssh podman python-all dh-python python3-pip python3 python3-venv python3-stdeb python3-pyside2.qtcore python3-pyside2.qtgui python3-pyside2.qtwidgets python3-appdirs python3-click python3-xdg python3-requests python3-colorama
 
   - &install-dependencies-rpm
     name: Install dependencies (rpm)
     command: |
       dnf install -y podman git openssh make automake gcc gcc-c++ rpm-build python3-setuptools python3-pyside2 python3-appdirs python3-click python3-pyxdg python3-requests python3-colorama
+
+  - &install-dependencies-poetry
+    name: Install poetry dependencies
+    command: |
+      python3 -m venv virtualenv
+      . virtualenv/bin/activate
+      pip3 install poetry
+      poetry shell                # open a poetry venv to change to the project's python version
+      poetry install
 
   - &build-deb
     name: Build the .deb package
@@ -172,6 +181,7 @@ jobs:
     steps:
       - run: *install-dependencies-deb
       - checkout
+      - run: *install-dependencies-poetry
       - restore_cache: *restore-cache
       - run: *copy-image
       - run: *build-deb
@@ -326,33 +336,33 @@ workflows:
   build:
     jobs:
       - build-container-image
-      - convert-test-docs:
-          requires:
-            - build-container-image
-      - build-ubuntu-jammy:
-          requires:
-            - build-container-image
-      - build-ubuntu-impish:
-          requires:
-            - build-container-image
-      - build-ubuntu-hirsute:
-          requires:
-            - build-container-image
-      - build-debian-bullseye:
-          requires:
-            - build-container-image
+      #- convert-test-docs:
+      #    requires:
+      #      - build-container-image
+      #- build-ubuntu-jammy:
+      #    requires:
+      #      - build-container-image
+      #- build-ubuntu-impish:
+      #    requires:
+      #      - build-container-image
+      #- build-ubuntu-hirsute:
+      #    requires:
+      #      - build-container-image
+      #- build-debian-bullseye:
+      #    requires:
+      #      - build-container-image
       - build-debian-bookworm:
           requires:
             - build-container-image
-      - build-fedora-37:
-          requires:
-            - build-container-image
-      - build-fedora-36:
-          requires:
-            - build-container-image
-      - build-fedora-35:
-          requires:
-            - build-container-image
+      #- build-fedora-37:
+      #    requires:
+      #      - build-container-image
+      #- build-fedora-36:
+      #    requires:
+      #      - build-container-image
+      #- build-fedora-35:
+      #    requires:
+      #      - build-container-image
 
   build-and-deploy:
     jobs:
